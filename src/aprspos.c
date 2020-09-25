@@ -384,7 +384,8 @@ extern void aprspos_GetPos(struct aprsstr_POSITION * pos, uint32_t * speed,
    else if (c=='$' && payload+30UL<buf_len-1) {
       /* gps 4806.9409,N,01134.6219,E */
       ok0 = 0;
-      if (buf[payload+1UL]=='G' && buf[payload+2UL]=='P') {
+      if (buf[payload+1UL]=='G') {
+         /*& (buf[payload+2]="P")*/
          i = payload+7UL;
          gpst = buf[payload+5UL];
          if ((buf[payload+3UL]=='G' && buf[payload+4UL]=='G') && gpst=='A') {

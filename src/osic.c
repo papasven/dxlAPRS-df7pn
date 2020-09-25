@@ -88,7 +88,7 @@ void osic_WerrStrLn(char s[], uint32_t s_len)
 
 	len = strnlen(s, s_len);
 	fprintf(stderr, "%.*s", len, s);
-	osic_WrLn();
+	osic_WerrLn();
 }
 
 void osic_WrUINT32(uint32_t x, uint32_t witdh)
@@ -115,21 +115,21 @@ void osic_WrHex(uint32_t n, uint32_t f)
 int osic_getptsname(int fd, char *name, int len)
 {
 #ifndef MACOS
-	return ptsname_r(fd, name, len);
+        return ptsname_r(fd, name, len);
 #else
-	{
-		/* MacOS does not have ptsname_r, emulate it with ptsname */
-		if (name == NULL)
-			return -EINVAL;
-		char *n = ptsname(fd);
-		if (n == NULL)
-			return -ENOTTY;
-		if (len < strlen(n))
-			return -ERANGE;
-		strncpy(name, n, len);
+        {
+                /* MacOS does not have ptsname_r, emulate it with ptsname */
+                if (name == NULL)
+                        return -EINVAL;
+                char *n = ptsname(fd);
+                if (n == NULL)
+                        return -ENOTTY;
+                if (len < strlen(n))
+                        return -ERANGE;
+                strncpy(name, n, len);
 
-		return 0;
-	}
+                return 0;
+        }
 #endif
 }
 
@@ -247,20 +247,26 @@ int osic_Size(int fd)
 
 void osic_Seek(int32_t fd, uint32_t pos)
 {
-	lseek(fd, (int32_t)pos, SEEK_SET);
+	lseek(fd, (off_t)pos, SEEK_SET);
 }
 
 void osic_Seekcur(int32_t fd, int32_t rel)
 {
 #ifndef MACOS
-	if (lseek64(fd, rel, (uint32_t)SEEK_CUR) < 0)
+	if (lseek64(fd, (off_t)rel, SEEK_CUR) < 0)
 		lseek(fd, 0, SEEK_SET);
 #else
-	/* MacOS has no lseek64 */
-	if (lseek(fd, rel, (uint32_t)SEEK_CUR) < 0)
-		lseek(fd, 0, SEEK_SET);
+        /* MacOS has no lseek64 */
+        if (lseek(fd, rel, SEEK_CUR) < 0)
+                lseek(fd, 0, SEEK_SET);
 #endif
 }
+
+void osic_Seekend(int32_t fd, int32_t pos)
+{
+        lseek(fd, (off_t)pos, SEEK_END);
+}
+
 
 void osic_Remove(char fname[], uint32_t fname_len, char *done)
 {
@@ -283,6 +289,13 @@ char osic_Exists(char fname[], uint32_t fname_len)
 int osic_symblink(char *existing, char *newname)
 {
 	return symlink(existing, newname);
+}
+
+int osic_isfifo(int fd)
+{
+  struct stat st;
+  fstat(fd, &st);
+  return ((st.st_mode & S_IFMT) == S_IFIFO) || ((st.st_mode & S_IFMT) == S_IFCHR);
 }
 
 char osic_mkdir(char path[], uint32_t fname_len, uint32_t perm)
@@ -495,11 +508,12 @@ uint32_t *X2C_COMPLEMENT(uint32_t *res, uint32_t *a, uint32_t length)
 
 uint32_t X2C_SET(uint32_t a, uint32_t b, uint16_t bits)
 {
-	if ((a > b || a >= (uint32_t)bits) || b >= (uint32_t)bits)
-		return 0;
-
-	return ((uint32_t)((2<<(int)b) - (1<<(int)a)));
+   if ((a>b || a>=(uint32_t)bits) || b>=(uint32_t)bits) return 0ul;
+   return ((uint32_t) ((2L<<(int)b) - (1L<<(int)a)));
+   return 0ul;
 }
+
+
 
 struct xrMM_Dynarr {
 	char *a;

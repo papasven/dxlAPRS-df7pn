@@ -30,7 +30,7 @@ struct sondeaprs_SDRBLOCK {
    char valid;
 };
 
-#define sondeaprs_VERSION "sondemod 1.36 - ext DF7PN"
+#define sondeaprs_VERSION "sondemod 1.36e"
 
 #define sondeaprs_minusG "G"
 
@@ -38,20 +38,19 @@ struct sondeaprs_SDRBLOCK {
 
 #define sondeaprs_minusP "P"
 
-enum send_type { type_send_pos, type_send_raw_only, type_send_duplicate };
-typedef enum send_type sondeaprs_type; 
+#define sondeaprs_LASTSECONDS 3600
 
-//---- erweitert um IP Adresse als uint32_t
+#define sondeaprs_BEFOREBURST 100000
+
 extern void sondeaprs_senddata(double, double, double,
                 double, double, double, double,
                 double, double, double, double,
                 double, double, double, double,
                 double, uint32_t, uint32_t, char [],
-                uint32_t, uint32_t, uint32_t, char [], uint32_t,
-                uint32_t, double, char, char [],
-                uint32_t, char [], uint32_t,
-                struct sondeaprs_SDRBLOCK,
-				uint32_t ip);
+                uint32_t, uint32_t, uint32_t, uint32_t, double,
+                 char [], uint32_t, uint32_t, double,
+                char, char, int32_t, char [], uint32_t,
+                 char [], uint32_t, struct sondeaprs_SDRBLOCK);
 
 extern int32_t sondeaprs_GetIp(char [], uint32_t, uint32_t *,
                 uint32_t *, uint32_t *);
@@ -65,7 +64,6 @@ extern char sondeaprs_objname[100];
 extern char sondeaprs_commentfn[1025];
 
 extern char sondeaprs_csvfilename[1025];
- extern char sondeaprs_SQL[2];
 
 extern char sondeaprs_sym[2];
 

@@ -1,10 +1,3 @@
-/*
- * dxlAPRS toolchain
- *
- * Copyright (C) Christian Rabler <oe5dxl@oevsv.at>
- *
- * SPDX-License-Identifier:	GPL-2.0+
- */
 #include <png.h>
 #include <sys/types.h>
 #include <stdint.h>
